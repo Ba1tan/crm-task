@@ -35,9 +35,9 @@ public class MeetingService {
     @Transactional
     public Meeting set(Long companyId, Long managerId, Instant startAt)
     {
-        Company company = compRepo.findById(companyId)
+        Company company = compRepo.findByIdForUpdate(companyId)
                 .orElseThrow(() -> ApiException.notFound("Компания не найдена"));
-        Manager manager = managerRepo.findById(managerId)
+        Manager manager = managerRepo.findByIdForUpdate(managerId)
                 .orElseThrow(() -> ApiException.notFound("Менеджер не найден"));
         requireWorkingHours(startAt);
         Instant endAt = startAt.plus(WorkingHoursConstraint.getDuration());
