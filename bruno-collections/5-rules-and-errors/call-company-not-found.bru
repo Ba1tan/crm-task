@@ -1,0 +1,22 @@
+meta {
+  name: Call for a missing company (404)
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/calls
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": 999999,
+    "result": "no_answer"
+  }
+}
+
+assert {
+  res.status: eq 404
+}

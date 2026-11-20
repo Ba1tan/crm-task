@@ -1,0 +1,23 @@
+meta {
+  name: Duplicate BIN (409)
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/companies
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Дубликат",
+    "bin": "{{bin}}",
+    "phone": "+77010000000"
+  }
+}
+
+assert {
+  res.status: eq 409
+}

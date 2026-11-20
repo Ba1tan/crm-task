@@ -1,0 +1,27 @@
+meta {
+  name: Create meeting (10:00 Almaty)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/meetings
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{companyId}},
+    "managerId": {{managerId}},
+    "startAt": "{{day}}T05:00:00Z"
+  }
+}
+
+vars:post-response {
+  meetingId: res.body.id
+}
+
+assert {
+  res.status: eq 201
+}

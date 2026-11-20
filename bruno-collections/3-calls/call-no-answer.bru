@@ -1,0 +1,23 @@
+meta {
+  name: Call: no_answer
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/calls
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{company2Id}},
+    "result": "no_answer",
+    "comment": "не берут трубку"
+  }
+}
+
+assert {
+  res.status: eq 201
+}

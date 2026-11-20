@@ -1,0 +1,19 @@
+meta {
+  name: Schedule with a malformed date (400)
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{baseUrl}}/managers/{{managerId}}/schedule?date=not-a-date
+  body: none
+  auth: none
+}
+
+params:query {
+  date: not-a-date
+}
+
+assert {
+  res.status: eq 400
+}

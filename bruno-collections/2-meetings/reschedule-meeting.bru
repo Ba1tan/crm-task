@@ -1,0 +1,32 @@
+meta {
+  name: Reschedule meeting (to 12:00 Almaty)
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/meetings/{{meetingId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "startAt": "{{day}}T07:00:00Z"
+  }
+}
+
+vars:pre-request {
+  meetingId: 1
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  test("initialStartAt is not lost after reschedule", function () {
+    expect(res.body.initialStartAt).to.equal(bru.getEnvVar("day") + "T05:00:00Z");
+    expect(res.body.startAt).to.equal(bru.getEnvVar("day") + "T07:00:00Z");
+  });
+}

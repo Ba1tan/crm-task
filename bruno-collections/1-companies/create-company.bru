@@ -1,0 +1,32 @@
+meta {
+  name: Create company
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/companies
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "ТОО Ромашка",
+    "bin": "{{bin}}",
+    "phone": "+77011234567"
+  }
+}
+
+vars:post-response {
+  companyId: res.body.id
+}
+
+assert {
+  res.status: eq 201
+}
+
+script:pre-request {
+  const bin = String(Math.floor(Math.random() * 1e12)).padStart(12, "0");
+  bru.setVar("bin", bin);
+}

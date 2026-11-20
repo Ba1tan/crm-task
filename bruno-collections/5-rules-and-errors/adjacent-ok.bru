@@ -1,0 +1,23 @@
+meta {
+  name: Adjacent slot 11:00-12:00 is allowed (201)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/meetings
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{company2Id}},
+    "managerId": {{managerId}},
+    "startAt": "{{errDay}}T06:00:00Z"
+  }
+}
+
+assert {
+  res.status: eq 201
+}

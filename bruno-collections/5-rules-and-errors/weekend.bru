@@ -1,0 +1,23 @@
+meta {
+  name: Saturday (422)
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/meetings
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{company2Id}},
+    "managerId": {{manager2Id}},
+    "startAt": "{{weekend}}T05:00:00Z"
+  }
+}
+
+assert {
+  res.status: eq 422
+}

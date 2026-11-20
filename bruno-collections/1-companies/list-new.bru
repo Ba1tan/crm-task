@@ -1,0 +1,21 @@
+meta {
+  name: List companies (status=new)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/companies?status=new&page=0&size=20
+  body: none
+  auth: none
+}
+
+params:query {
+  status: new
+  page: 0
+  size: 20
+}
+
+assert {
+  res.status: eq 200
+}

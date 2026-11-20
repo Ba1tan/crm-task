@@ -1,0 +1,22 @@
+meta {
+  name: Call meeting_set without meeting (422)
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/calls
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{company2Id}},
+    "result": "meeting_set"
+  }
+}
+
+assert {
+  res.status: eq 422
+}

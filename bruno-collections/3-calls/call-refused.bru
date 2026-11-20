@@ -1,0 +1,23 @@
+meta {
+  name: Call: refused
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/calls
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{company2Id}},
+    "result": "refused",
+    "comment": "не интересно"
+  }
+}
+
+assert {
+  res.status: eq 201
+}

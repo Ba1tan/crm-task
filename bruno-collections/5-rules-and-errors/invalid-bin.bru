@@ -1,0 +1,23 @@
+meta {
+  name: Invalid BIN, 3 digits (400)
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/companies
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Кривой БИН",
+    "bin": "123",
+    "phone": "+77010000000"
+  }
+}
+
+assert {
+  res.status: eq 400
+}

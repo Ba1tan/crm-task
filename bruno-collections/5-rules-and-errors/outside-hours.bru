@@ -1,0 +1,23 @@
+meta {
+  name: Start 17:30 does not fit before 18:00 (422)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/meetings
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{company2Id}},
+    "managerId": {{manager2Id}},
+    "startAt": "{{errDay}}T12:30:00Z"
+  }
+}
+
+assert {
+  res.status: eq 422
+}

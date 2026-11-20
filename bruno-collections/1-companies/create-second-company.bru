@@ -1,0 +1,32 @@
+meta {
+  name: Create second company
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/companies
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "АО Лютик",
+    "bin": "{{bin2}}",
+    "phone": "+77017654321"
+  }
+}
+
+vars:post-response {
+  company2Id: res.body.id
+}
+
+assert {
+  res.status: eq 201
+}
+
+script:pre-request {
+  const bin = String(Math.floor(Math.random() * 1e12)).padStart(12, "0");
+  bru.setVar("bin2", bin);
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Call: meeting_set (meeting is created inside)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/calls
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{company2Id}},
+    "result": "meeting_set",
+    "meeting": {
+      "managerId": {{managerId}},
+      "startAt": "{{day}}T09:00:00Z"
+    },
+    "comment": "договорились на 14:00"
+  }
+}
+
+assert {
+  res.status: eq 201
+}

@@ -1,0 +1,20 @@
+meta {
+  name: List companies (no filter, size=5)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/companies?page=0&size=5
+  body: none
+  auth: none
+}
+
+params:query {
+  page: 0
+  size: 5
+}
+
+assert {
+  res.status: eq 200
+}

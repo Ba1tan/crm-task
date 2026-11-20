@@ -1,0 +1,26 @@
+meta {
+  name: Cancel meeting
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/meetings/{{meetingId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "status": "cancelled",
+    "reason": "клиент передумал"
+  }
+}
+
+vars:pre-request {
+  meetingId: 1
+}
+
+assert {
+  res.status: eq 200
+}

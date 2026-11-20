@@ -1,0 +1,26 @@
+meta {
+  name: Call no_answer with meeting block (422)
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/calls
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{company2Id}},
+    "result": "no_answer",
+    "meeting": {
+      "managerId": {{managerId}},
+      "startAt": "{{errDay}}T09:00:00Z"
+    }
+  }
+}
+
+assert {
+  res.status: eq 422
+}

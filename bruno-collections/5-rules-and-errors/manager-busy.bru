@@ -1,0 +1,23 @@
+meta {
+  name: Overlap, same manager: 10:30 (409)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/meetings
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "companyId": {{company2Id}},
+    "managerId": {{managerId}},
+    "startAt": "{{errDay}}T05:30:00Z"
+  }
+}
+
+assert {
+  res.status: eq 409
+}

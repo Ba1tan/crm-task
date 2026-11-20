@@ -1,0 +1,19 @@
+meta {
+  name: Manager schedule for a day
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/managers/{{managerId}}/schedule?date={{day}}
+  body: none
+  auth: none
+}
+
+params:query {
+  date: {{day}}
+}
+
+assert {
+  res.status: eq 200
+}
