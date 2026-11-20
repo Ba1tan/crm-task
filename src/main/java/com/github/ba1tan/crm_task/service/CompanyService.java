@@ -13,12 +13,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
+import java.time.Clock;
 
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
     private final CompanyRepository compRepo;
+    private final Clock clock;
 
     public CompanyResponse create(CreateCompanyRequest request)
     {
@@ -26,7 +27,7 @@ public class CompanyService {
         {
             throw ApiException.conflict("BIN_ALREADY_EXISTS", "Компания с таким БИН уже сущечтвет");
         }
-        Company saved = compRepo.saveAndFlush(new Company(request.name(), request.bin(), request.phone(), Instant.now()));
+        Company saved = compRepo.saveAndFlush(new Company(request.name(), request.bin(), request.phone(), clock.instant()));
         return CompanyResponse.from(saved);
     }
     public PageResponse<CompanyResponse> list(CompanyStatus status, int page, int size)
