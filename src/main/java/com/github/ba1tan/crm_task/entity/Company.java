@@ -24,6 +24,9 @@ public class Company {
 
     private String phone;
 
+    @Enumerated(EnumType.STRING)
+    private CompanyStatus status = CompanyStatus.NEW;
+
     private Instant createdAt;
 
     public Company(String name, String bin, String phone, Instant createdAt)
