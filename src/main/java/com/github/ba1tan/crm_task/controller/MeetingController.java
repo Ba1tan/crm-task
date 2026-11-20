@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import com.github.ba1tan.crm_task.dto.UpdateMeetingRequest;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +26,11 @@ public class MeetingController {
     public MeetingResponse get(@PathVariable Long id)
     {
         return service.get(id);
+    }
+
+    @PatchMapping("/{id}")
+    public MeetingResponse update(@PathVariable Long id, @Valid @RequestBody UpdateMeetingRequest request)
+    {
+        return service.update(id, request);
     }
 }

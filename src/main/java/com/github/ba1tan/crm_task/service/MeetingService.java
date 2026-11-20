@@ -12,6 +12,7 @@ import com.github.ba1tan.crm_task.utils.WorkingHoursConstraint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.github.ba1tan.crm_task.dto.UpdateMeetingRequest;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -50,6 +51,42 @@ public class MeetingService {
     public MeetingResponse get(Long id)
     {
         return meetingRepo.findById(id).map(MeetingResponse::from).orElseThrow(() -> ApiException.notFound("Встреча не найдена"));
+    }
+
+    @Transactional
+    public MeetingResponse update(Long id, UpdateMeetingRequest request)
+    {
+        boolean reschedule = request.startAt() != null;
+        boolean cancel = request.status() != null;
+        if(reschedule == cancel)
+        {
+            throw ApiException.badRequest("Передайте либо startAt, либо status=cancelled");
+        }
+        if(cancel && request.status() != MeetingStatus.CANCELLED)
+        {
+            throw ApiException.badRequest("Допустимое значение status: cancelled");
+        }
+        Meeting meeting = meetingRepo.findById(id).orElseThrow(() -> ApiException.notFound("Такой встречи не найдено"));
+        if(meeting.getStatus() != MeetingStatus.SCHEDULED)
+        {
+            throw ApiException.conflict("MEETING_NOT_ACTIVE", "Встреча уже отменена");
+        }
+        Instant now = clock.instant();
+        if(cancel)
+        {
+            meeting.cancel(request.reason(), now);
+            meeting.getCompany().setStatus(CompanyStatus.NEW);
+        }
+        else
+        {
+            requireWorkingHours(request.startAt());
+            Instant newEnd = request.startAt().plus(WorkingHoursConstraint.getDuration());
+            ensureFree(meeting.getManager().getId(), meeting.getCompany().getId(), request.startAt(), newEnd, meeting.getId());
+
+            meeting.reschedule(request.startAt(), newEnd, now);
+        }
+        return MeetingResponse.from(meetingRepo.saveAndFlush(meeting));
+
     }
 
     // вспомогательныее методы
