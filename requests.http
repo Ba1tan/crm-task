@@ -1,0 +1,124 @@
+
+@host = http://localhost:8080
+
+### 1. Create a company (id = 1)
+POST {{host}}/companies
+Content-Type: application/json
+
+{ "name": "Romashka LLP", "bin": "123456789012", "phone": "+77011234567" }
+
+### 2. Create a second company (id = 2)
+POST {{host}}/companies
+Content-Type: application/json
+
+{ "name": "ABC JSC", "bin": "210987654321", "phone": "+77017654321" }
+
+### 3. List companies: status filter and pagination
+GET {{host}}/companies?status=new&page=0&size=10
+
+### 4. Call: no answer (company 2)
+POST {{host}}/calls
+Content-Type: application/json
+
+{ "companyId": 2, "result": "no_answer", "comment": "nobody picked up" }
+
+### 5. Call: meeting set (company 1, manager 1, 10:00 Almaty). The meeting is created inside, meeting id = 1
+POST {{host}}/calls
+Content-Type: application/json
+
+{
+  "companyId": 1,
+  "result": "meeting_set",
+  "meeting": { "managerId": 1, "startAt": "2026-11-25T05:00:00Z" },
+  "comment": "agreed on Wednesday"
+}
+
+### 6. Create a meeting directly (company 2, manager 2, 12:00 Almaty), meeting id = 2
+POST {{host}}/meetings
+Content-Type: application/json
+
+{ "companyId": 2, "managerId": 2, "startAt": "2026-11-25T07:00:00Z" }
+
+### 7. Get a meeting (initialStartAt and history)
+GET {{host}}/meetings/1
+
+### 8. Reschedule meeting 1 to 11:00 Almaty (initialStartAt stays 10:00)
+PATCH {{host}}/meetings/1
+Content-Type: application/json
+
+{ "startAt": "2026-11-25T06:00:00Z" }
+
+### 9. Cancel meeting 2
+PATCH {{host}}/meetings/2
+Content-Type: application/json
+
+{ "status": "cancelled", "reason": "client changed their mind" }
+
+### 10. Manager schedule for a day (calendar day in Asia/Almaty)
+GET {{host}}/managers/1/schedule?date=2026-11-25
+
+### ---------------- Errors ----------------
+
+### 409 MANAGER_BUSY: manager 1 is busy 11:00-12:00 Almaty, 11:30 overlaps
+POST {{host}}/meetings
+Content-Type: application/json
+
+{ "companyId": 2, "managerId": 1, "startAt": "2026-11-25T06:30:00Z" }
+
+### 409 COMPANY_BUSY: company 1 already has a meeting at that time, even with another manager
+POST {{host}}/meetings
+Content-Type: application/json
+
+{ "companyId": 1, "managerId": 2, "startAt": "2026-11-25T06:30:00Z" }
+
+### 422 OUTSIDE_WORKING_HOURS: 17:30 Almaty does not fit before 18:00
+POST {{host}}/meetings
+Content-Type: application/json
+
+{ "companyId": 2, "managerId": 2, "startAt": "2026-11-25T12:30:00Z" }
+
+### 422 OUTSIDE_WORKING_HOURS: Saturday
+POST {{host}}/meetings
+Content-Type: application/json
+
+{ "companyId": 2, "managerId": 2, "startAt": "2026-11-28T05:00:00Z" }
+
+### 422 MEETING_REQUIRED: meeting_set without a meeting
+POST {{host}}/calls
+Content-Type: application/json
+
+{ "companyId": 2, "result": "meeting_set" }
+
+### 422 MEETING_NOT_ALLOWED: refused with a meeting block
+POST {{host}}/calls
+Content-Type: application/json
+
+{
+  "companyId": 2,
+  "result": "refused",
+  "meeting": { "managerId": 3, "startAt": "2026-11-26T05:00:00Z" }
+}
+
+### 409 BIN_ALREADY_EXISTS
+POST {{host}}/companies
+Content-Type: application/json
+
+{ "name": "Duplicate", "bin": "123456789012", "phone": "+77010000000" }
+
+### 400 VALIDATION_ERROR: BIN is not 12 digits
+POST {{host}}/companies
+Content-Type: application/json
+
+{ "name": "Bad BIN", "bin": "123", "phone": "+77010000000" }
+
+### 404 NOT_FOUND: call for a missing company
+POST {{host}}/calls
+Content-Type: application/json
+
+{ "companyId": 999999, "result": "no_answer" }
+
+### 404 NOT_FOUND: schedule of a missing manager
+GET {{host}}/managers/999999/schedule?date=2026-11-25
+
+### 400 VALIDATION_ERROR: malformed date
+GET {{host}}/managers/1/schedule?date=not-a-date
