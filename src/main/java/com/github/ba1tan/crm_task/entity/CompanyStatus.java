@@ -1,5 +1,6 @@
 package com.github.ba1tan.crm_task.entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.ba1tan.crm_task.exception.ApiException;
 
 import java.util.Locale;
@@ -9,7 +10,7 @@ public enum CompanyStatus {
     NO_ANSWER,
     REFUSED,
     MEETING_SET;
-
+    @JsonValue
     public String json(){
         return name().toLowerCase(Locale.ROOT);
     }
