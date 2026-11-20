@@ -8,7 +8,7 @@ import java.time.Instant;
 public record CallResponse(Long id, Long companyId, CallResult result, Long meetingId, String comment, Instant calledAt) {
     public static CallResponse from(Calls c)
     {
-        return new CallResponse(c.getId(), c.getCompany().getId(), c.getResult(), c.getMeeting().getId(), c.getComment(), c.getCalledAt());
+        return new CallResponse(c.getId(), c.getCompany().getId(), c.getResult(),c.getMeeting() == null ? null : c.getMeeting().getId(), c.getComment(), c.getCalledAt());
 
     }
 }
